@@ -17,9 +17,9 @@ function calculateIndex(x,y) {
 }
 
 
-
-app.get(`/coordinates/${lat},${lon}`, (req,res) => {
-    const response = data[calculateIndex(lat,lon)];
+app.get('/coordinates/:lat/:lon', (req,res) => {
+    const response = data[calculateIndex(req.params.lat,req.params.lon)];
+    console.log(response)
     res.json(response)
 })
 
