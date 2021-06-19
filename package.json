@@ -1,0 +1,23 @@
+{
+  "name": "trixapi",
+  "version": "1.0.0",
+  "description": "INICIANDO O PROJETO!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node api"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abimaelr/trixAPI.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Abimaelr/trixAPI/issues"
+  },
+  "homepage": "https://github.com/Abimaelr/trixAPI#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
