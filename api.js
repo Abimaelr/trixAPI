@@ -3,14 +3,12 @@ const {results: data} = require('./data')
 const fetch = require('node-fetch');
 const csvparser = require('csv-parser');
 const fs = require('fs');
-const request = require('request');
+const request = require('request-promise');
 
-// fetch('https://www.ecori.com.br/tabela/integracao.csv').then(data => console.log(Object.keys(data.body)))
 async function getInverters(){
-  const out = {available:[]}
-  await request.get('https://www.ecori.com.br/tabela/integracao.csv', async function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-          const csv = decodeURIComponent(body);
+  let out = {available:[]};
+  await request('https://www.ecori.com.br/tabela/integracao.csv').then(response => {
+          const csv = decodeURIComponent(response);
           const csvRows = csv.split('\r\n');
           let csvArr = [];
           csvRows.forEach(row => {csvArr = [...csvArr,row.split(';')]})
@@ -56,15 +54,27 @@ async function getInverters(){
               price: e[57],
             }
             out.available = [...out.available, obj]
-          })
-          
-          // return out;
-          // Continue with your processing here.
-      }
-    })
-    return out;
+  });
+
+})
+  return out;
 }
-getInverters().then(a => console.log(a))
+
+// fetch('https://www.ecori.com.br/tabela/integracao.csv').then(data => console.log(Object.keys(data.body)))
+// async function getInverters(){
+//   const out = {available:[]}
+//  request.get('https://www.ecori.com.br/tabela/integracao.csv', function (error, response, body) {
+//       if (!error && response.statusCode == 200) {
+          
+//           })
+          
+//           return out;
+//           // Continue with your processing here.
+//       }
+//     })
+//     return opa;
+// }
+// getInverters().then(a => a.json()).then(a => console.log(a))
 
 const app = express();
 
@@ -82,7 +92,9 @@ function calculateIndex(x,y) {
     return index;
 }
 
-app.get('/inverters', (req,res) => {
+app.get('/inverters', async (req,res) => {
+  const response = await getInverters();
+  console.log(response)
   res.json(response)
 })
 
