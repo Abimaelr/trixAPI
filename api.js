@@ -1,8 +1,6 @@
 const express = require('express');
 const {results: data} = require('./data')
 const fetch = require('node-fetch');
-const csvparser = require('csv-parser');
-const fs = require('fs');
 const request = require('request-promise');
 
 async function getInverters(){
@@ -60,22 +58,6 @@ async function getInverters(){
   return out;
 }
 
-// fetch('https://www.ecori.com.br/tabela/integracao.csv').then(data => console.log(Object.keys(data.body)))
-// async function getInverters(){
-//   const out = {available:[]}
-//  request.get('https://www.ecori.com.br/tabela/integracao.csv', function (error, response, body) {
-//       if (!error && response.statusCode == 200) {
-          
-//           })
-          
-//           return out;
-//           // Continue with your processing here.
-//       }
-//     })
-//     return opa;
-// }
-// getInverters().then(a => a.json()).then(a => console.log(a))
-
 const app = express();
 
 const PORT = process.env.PORT || 8877;
@@ -92,7 +74,7 @@ function calculateIndex(x,y) {
     return index;
 }
 
-app.get('/inverters', async (req,res) => {
+app.get('/swera', async (req,res) => {
   const response = await getInverters();
   console.log(response)
   res.json(response)
