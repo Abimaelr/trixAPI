@@ -78,24 +78,14 @@ function calculateIndex(x,y) {
 
 app.get('/swera', async (req,res) => {
   const response = await getInverters();
-  // console.log(response)
   res.json(response)
 });
 
-app.get('/swera/model', async (req,res) => {
-  const {available} = await getInverters();
-  // console.log(typeof all);
-  const Canadian = available.filter(({cod}) => cod.includes("CND"));
-  const DAH = available.filter(({cod}) => cod.includes("DAH"));
-  const JA = available.filter(({cod}) => cod.includes("JA"));
-  const BYD = available.filter(({cod}) => cod.includes("BYD"));
-  
-  const model = available.map((item) => {
+const modelate =
+  (db) => db.map((item) => {
     const data = item.cod.split('.');
     if(data.length === 5 && !item.cod.includes("SE")){
       const [inversor, boards, voltage, board, pot] = data;
-
-      console.log(pot)
       return {...item, inversor, boards, voltage, board, pot: pot*boards};
     }
     else if(data.length === 5 && item.cod.includes("SE")){
@@ -108,12 +98,29 @@ app.get('/swera/model', async (req,res) => {
       const [inversor, voltage, otimimzers, modelOtimizer, boards, board] = data;
       const potRegex = board.split(/[A-Z]/);
       const pot = potRegex[potRegex.length - 1] * boards;
-
       return {...item, inversor, boards, voltage, board, pot};
     }
   });
-  // const nulls = model.filter((item) => {return (item.pot > 0)});
-  res.json(model)
+
+const kits = async() => {
+  const {available} = await getInverters();
+  const Canadian = available.filter(({cod}) => cod.includes("CND"));
+  const DAH = available.filter(({cod}) => cod.includes("DAH"));
+  const JA = available.filter(({cod}) => cod.includes("JA"));
+  const BYD = available.filter(({cod}) => cod.includes("BYD"));
+  
+  const CanadianF = modelate(Canadian);
+  const DAHF = modelate(DAH);
+  const JAF = modelate(JA);
+  const BYDF = modelate(BYD);
+  const ALL = modelate(available);
+
+  return {ALL,CanadianF,JAF,BYDF,DAHF};
+}
+
+
+app.get('/kits', async (req,res) => {
+  res.json(await kits())
 })
 
 app.get('/coordinates/:lat,:lon', (req,res) => {
